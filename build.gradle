@@ -1,0 +1,48 @@
+plugins {
+    id 'org.springframework.boot' version '3.3.0' apply false
+    id 'io.spring.dependency-management' version '1.1.5' apply false
+    id 'com.github.node-gradle.node' version '7.0.2' apply false
+}
+
+allprojects {
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+}
+
+task runDev {
+    group = 'application'
+    description = 'Runs both Spring Boot backend and React frontend concurrently in development mode'
+    doLast {
+        def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+        def gradlewCmd = isWindows ? 'gradlew.bat' : './gradlew'
+        
+        println "Starting Spring Boot backend..."
+        def backendProcess = new ProcessBuilder(
+            isWindows ? 'cmd' : 'sh',
+            isWindows ? '/c' : '-c',
+            isWindows ? "${gradlewCmd} :backend:bootRun" : "${gradlewCmd} :backend:bootRun"
+        ).inheritIO().start()
+            
+        println "Starting React frontend dev server..."
+        def frontendProcess = new ProcessBuilder(
+            isWindows ? 'cmd' : 'sh',
+            isWindows ? '/c' : '-c',
+            "npm run dev"
+        ).directory(file('frontend')).inheritIO().start()
+            
+        Runtime.getRuntime().addShutdownHook(new Thread({
+            println "\nStopping backend and frontend dev servers..."
+            backendProcess.destroyForcibly()
+            frontendProcess.destroyForcibly()
+        }))
+        
+        try {
+            backendProcess.waitFor()
+            frontendProcess.waitFor()
+        } catch (InterruptedException e) {
+            backendProcess.destroyForcibly()
+            frontendProcess.destroyForcibly()
+        }
+    }
+}
+

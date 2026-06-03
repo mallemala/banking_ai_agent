@@ -1,0 +1,3 @@
+rootProject.name = 'banking_ai_agent'
+include 'backend'
+include 'frontend'

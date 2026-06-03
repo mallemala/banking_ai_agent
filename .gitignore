@@ -1,0 +1,36 @@
+# Gradle and build outputs
+.gradle/
+**/build/
+**/bin/
+**/target/
+**/node/
+
+# Node/NPM dependencies
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# IDEs and Editor configurations
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+
+# OS temporary and metadata files
+.DS_Store
+Thumbs.db
+~$*.pptx
+~$*
+
+# Local environment and secrets
+.env
+.env.local
+.env.*.local
+*.env
+*.local

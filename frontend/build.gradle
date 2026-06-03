@@ -1,0 +1,18 @@
+plugins {
+    id 'base'
+    id 'com.github.node-gradle.node' version '7.0.2'
+}
+
+node {
+    download = true
+    version = '20.12.0'
+}
+
+tasks.register('copyReactBuild', Copy) {
+    dependsOn 'npm_run_build'
+    from 'dist'
+    into "${project.parent.projectDir}/backend/src/main/resources/static"
+}
+
+// Ensure standard build task compiles React assets
+build.dependsOn copyReactBuild
